@@ -1,0 +1,2 @@
+Add any number of hosts and their su or sudo password and encrypt with ansible vault
+content can be as simple as ansible_become_pass:SU_OR_SUDO_PASSWORD to complex yml data types
