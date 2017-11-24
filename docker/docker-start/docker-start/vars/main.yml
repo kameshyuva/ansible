@@ -1,0 +1,7 @@
+docker_home_dir: /opt/docker
+docker_executables_dir: docker-executables
+dockerd_logs_dir: dockerd-logs
+tcp_port: 2375
+insecure_registry: DOCKER_REGISTRY_IP
+insecure_registry_port: 5000
+user: "{{ ansible_ssh_user }}"
