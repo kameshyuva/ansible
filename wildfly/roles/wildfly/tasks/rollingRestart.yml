@@ -1,0 +1,58 @@
+---
+- name: Read and set wildfly instance and port
+  set_fact:
+    serviceName: "{{ instance.split(':')[0] }}"
+    servicePort: "{{ instance.split(':')[1] }}"
+
+- name: put '{{serviceName}}:{{servicePort}}' out of rotation
+  replace:
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: '(^[ \t]*)BalancerMember http://localhost:{{servicePort}}/' 
+    replace: '\1#BalancerMember http://localhost:{{servicePort}}/'
+
+- name: graceful restart apache httpd
+  shell: /sbin/service httpd graceful
+  args: 
+    warn: false
+  register: gracefulOff
+
+- debug: msg="{{ gracefulOff }}"
+  when: gracefulOff.rc == 0 
+
+- name: wait for target apache 80 and 443 ports
+  wait_for: port={{item}}
+  with_items:
+     - 80
+     - 443
+
+- name: restart '{{serviceName}}:{{servicePort}}'  instance
+  service:  name="{{serviceName}}" state="{{ wildflyAction | default('started') }}" 
+  register: serviceStat
+  when: gracefulOff.rc == 0
+
+- debug: msg="{{serviceStat}}"
+
+- name: check if service is up
+  #shell: curl -sSI http://localhost:{{servicePort}}
+  uri: url="http://localhost:{{servicePort}}"
+  register: result
+  #until: result.stdout.find("HTTP/1.1 200 OK") != -1
+  until: result.status == 200
+  retries: 20
+  delay: 5
+  when: serviceStat.state == 'started'
+
+- name: put '{{serviceName}}:{{servicePort}}' back to rotation
+  replace:
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: '(^[ \t]*)#BalancerMember http://localhost:{{servicePort}}/'
+    replace: '\1BalancerMember http://localhost:{{servicePort}}/'
+
+- name: graceful restart apache httpd
+  shell: /sbin/service httpd graceful
+  args: 
+    warn: false
+  register: gracefulOn
+
+- debug: msg="{{ gracefulOn }}"
+  when: gracefulOn.rc == 0  
