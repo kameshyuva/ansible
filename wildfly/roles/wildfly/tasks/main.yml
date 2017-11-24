@@ -1,0 +1,8 @@
+---
+- name: start rolling restart of wildfly instances
+  include_tasks: rollingRestart.yml
+  with_items:
+    - wildfly1:8080
+    - wildfly2:8081
+  loop_control:
+    loop_var: instance 
