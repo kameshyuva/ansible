@@ -1,0 +1,8 @@
+---
+- name: start docker
+  shell: nohup /usr/bin/dockerd -H tcp://0.0.0.0:{{ tcp_port }}  -H unix:///var/run/docker.sock --insecure-registry {{ insecure_registry }}:{{ insecure_registry_port }} &>{{ docker_home_dir }}/{{ dockerd_logs_dir }}/dockerd.out.$(date +%Y-%m-%d) &
+  register: docker_daemon_start
+　
+- name: wait for docker daemon to start
+  wait_for: port={{ tcp_port }}
+  when: docker_daemon_start.rc == 0
