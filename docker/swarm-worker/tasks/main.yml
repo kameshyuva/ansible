@@ -1,0 +1,11 @@
+---
+- name: join workers to swarm
+  shell: >
+      docker swarm join \
+        --token={{ hostvars[groups['swarm_manager_operational'][0]]['swarm_worker_token']['stdout'] }} \
+        {{ groups['swarm-manager'][0] }}:{{ swarm_port }}
+  register: docker_workers_join
+  become: yes
+  become_user: root
+  failed_when: docker_workers_join.rc != 0 and ("This node is already part of a swarm" not in docker_workers_join.stderr )
+  changed_when: docker_workers_join.rc == 0
