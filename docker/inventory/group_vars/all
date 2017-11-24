@@ -1,0 +1,9 @@
+docker_deploy_file: docker-17.03.1-ce.tgz
+docker_extract_dir: "{{ docker_deploy_file | basename | regex_replace('.tar.gz','') | regex_replace('.tgz','') }}"
+docker_home_dir: /opt/docker
+docker_executables_dir: docker-executables
+dockerd_logs_dir: dockerd-logs
+tcp_port: 2375
+insecure_registry: DOCKER_REGISTRY
+insecure_registry_port: 5000
+user: "{{ ansible_ssh_user }}"
