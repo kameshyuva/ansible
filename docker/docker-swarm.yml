@@ -1,0 +1,22 @@
+---
+- hosts: swarm-manager
+  gather_facts: false
+  roles:
+  - { role: swarm-manager , tags: [ 'init' ] }
+  - { role: swarm-leave , tags: [ 'leave' ] }
+　
+- hosts: swarm-worker
+  gather_facts: false
+  roles: 
+  - { role: swarm-worker, tags: [ 'init' ] }
+  - { role: swarm-leave , tags: [ 'leave' ] }
+　
+- hosts: hdfs-manager
+  gather_facts: false
+  roles:
+  - swarm-manager
+　
+- hosts: hdfs-worker
+  gather_facts: false
+  roles:
+  - swarm-worker
