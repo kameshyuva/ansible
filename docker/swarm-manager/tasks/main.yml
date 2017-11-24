@@ -1,0 +1,25 @@
+---
+- name: get ip of the node
+  shell: >
+     nslookup `uname -n` | grep ^Address | tail -1 | awk '{print $2}'
+  register: server_ip
+　
+- name: initialize swarm cluster
+  shell: >
+      docker swarm init --advertise-addr={{ server_ip.stdout }}
+  register: bootstrap_manager_node
+  failed_when: >
+     bootstrap_manager_node.rc !=0 and ("This node is already part of a swarm" not in bootstrap_manager_node.stderr )
+  when: server_ip.rc == 0
+　
+- name: add initialized host to swarm_manager_operational group
+  add_host:
+    hostname: "{{ groups['swarm-manager'][0] }}"
+    groups: swarm_manager_operational
+  when: bootstrap_manager_node | changed
+　
+- name: get swarm worker token
+  shell: >
+     docker swarm join-token -q worker
+  register: swarm_worker_token
+  when: bootstrap_manager_node | changed
