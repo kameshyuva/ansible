@@ -1,0 +1,19 @@
+[swarm-manager]
+IP1 ansible_ssh_user=root ansible_ssh_private_key_file=/root/.ssh/id_rsa
+　
+[swarm-worker]
+#IP2 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
+#IP3 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
+#IP4 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
+#IP5 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
+#IP6 ansible_ssh_user=docker ansible_ssh_private_key_file=/root/.ssh/id_rsa
+IP7 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
+IP8 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
+IP9 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
+　
+#[hdfs-manager]
+#IP10 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
+　
+#[hdfs-worker]
+#IP11 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
+#IP12 ansible_ssh_user=admin ansible_ssh_private_key_file=/root/.ssh/id_rsa
