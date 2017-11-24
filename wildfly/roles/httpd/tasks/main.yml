@@ -1,0 +1,20 @@
+---
+- name: check httpd status
+  shell: ps -ef|grep [h]ttpd
+  tags: 
+    - shell
+  register: shellstatus
+
+- debug:
+    msg: "{{ shellstatus.stdout_lines }}"
+  tags: shell
+
+- name: ensure httpd started
+  service: name=httpd state=started
+  tags: 
+    - service
+  register: servicestatus
+
+- debug:
+    msg: "{{ servicestatus }}"
+  tags: service
