@@ -1,0 +1,2 @@
+#This file should be encrypted with ansible vault and the content will be as below
+ansible_become_pass: SU_OR_SUDO_PASSWAORD
