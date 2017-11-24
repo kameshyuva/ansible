@@ -1,0 +1,16 @@
+---
+- name: get running docker pids
+  shell : pgrep docker
+  register: dockerpid
+  failed_when: >
+     dockerpid.rc != 0 and ( "not found" in dockerpid.stdout )
+　
+#- debug: msg={{ dockerpid.stdout | regex_replace("\n",",") }}
+　
+- name: kill running docker pids
+  shell: kill -9 {{item}}
+  with_items:
+  - "{{ dockerpid.stdout | regex_replace('\n',' ') }}"
+  become: yes
+  become_user: root
+  when: dockerpid.rc == 0
