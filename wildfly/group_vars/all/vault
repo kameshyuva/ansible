@@ -1,2 +1,2 @@
-#This will be encrypted in actual servers
+#below should be the content and the file will be encrypted in actual servers
 vault_ansible_become_pass: SUPASSWORD
