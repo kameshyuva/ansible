@@ -1,0 +1,2 @@
+#This will be encrypted in actual servers
+vault_ansible_become_pass: SUPASSWORD
