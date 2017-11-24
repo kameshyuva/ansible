@@ -1,0 +1,6 @@
+---
+- hosts: all
+  gather_facts: False
+  roles:
+   - { role: httpd, tags : [ 'httpd' ] }
+   - { role: wildfly, tags : [ 'wildfly' ] } 
