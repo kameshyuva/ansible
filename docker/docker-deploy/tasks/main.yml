@@ -1,0 +1,38 @@
+---
+- name: create package folder in remote machine
+  file: path={{ docker_home_dir }}/{{ item.name }} state=directory owner={{ user }} group={{ user }}  mode=0775 recurse=yes
+  with_items:
+    - { name:  "{{ dockerd_logs_dir }}" }
+    - { name: "{{ docker_executables_dir }}/{{ docker_extract_dir  }}" }
+　
+- name: copy docker package to server
+  copy: src={{ docker_deploy_file }} dest={{ docker_home_dir }}/{{ docker_executables_dir }} owner={{ user }} group={{ user }} mode=0777
+　
+- name: make log file writable to all
+  shell: find {{ docker_home_dir }}/{{ dockerd_logs_dir }} -maxdepth 1 -name 'dockerd.out.*' -exec chmod 0766 {} \;
+　
+- name: extract package
+  shell: cd {{ docker_home_dir }}/{{ docker_executables_dir }}; tar xvf {{ docker_deploy_file }} --strip 1 -C {{ docker_extract_dir }}
+　
+- name: move binaries to bin folder
+  shell: find {{ docker_home_dir }}/{{ docker_executables_dir }}/{{ docker_extract_dir }} -mindepth 1 -maxdepth 1 -type f -exec cp {} /usr/bin \;
+  register: docker_executables
+  failed_when: >
+     docker_executables.rc != 0 and ("No such file or directory" in docker_executables.stderr)
+  changed_when: docker_executables.rc == 0
+　
+- name: set user group privs
+  shell: groupadd -f docker; usermod -a -G docker {{ user }}
+  register: priviliges_set
+  when: docker_executables.rc == 0
+　
+## docker-start ROLS IS DEFINED. USE IT. KEEPING THE BELOW HERE JUST FOR REFERENCE..
+#- name: start docker
+#  shell: nohup /usr/bin/dockerd -H tcp://0.0.0.0:{{ tcp_port }}  -H unix:///var/run/docker.sock --insecure-registry {{ insecure_registry }}:{{ insecure_registry_port }} &>{{ docker_home_dir }}/{{ dockerd_logs_dir }}/dockerd.out.$(date +%Y-%m-%d) &
+#  register: docker_daemon_start
+#  when: docker_executables.rc == 0
+  #when: priviliges_set.rc == 0
+　
+#- name: wait for docker daemon to start
+#  wait_for: port={{ tcp_port }}
+#  when: docker_daemon_start.rc == 0
