@@ -1,0 +1,24 @@
+---
+- hosts: swarm-manager
+  become: false
+  roles: 
+  - { role: docker-deploy , tags: [ 'deploy' ] } 
+  - { role: docker-start , tags: [ 'start' ] }
+　
+# host_vars folder has the vaulted sudo password file for each swarm worker.
+# Here, sudo is set at host level. It can be set at roles level as well as at tasks level.
+- hosts: swarm-worker
+  become: yes
+  become_user: root
+  roles:
+  - { role: docker-deploy , tags: [ 'deploy' ] }
+  - { role: docker-start , tags: [ 'start' ] }
+　
+# host_vars folder has the vaulted sudo password file for each swarm worker.
+# # Here, sudo is set at host level. It can be set at roles level as well as at tasks level.
+- hosts: hdfs-*
+  become: yes
+  become_user: root
+  roles:
+  - { role: docker-deploy , tags: [ 'deploy' ] }
+  - { role: docker-start , tags: [ 'start' ] }
